@@ -12,10 +12,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { prompt, replicateToken } = req.body;
+    const { prompt } = req.body;
 
-    if (!prompt || !replicateToken) {
-      return res.status(400).json({ error: 'Missing prompt or token' });
+    if (!prompt) {
+      return res.status(400).json({ error: 'Missing prompt' });
+    }
+
+    // Use the API key stored in environment variables
+    const replicateToken = process.env.REPLICATE_API_KEY;
+
+    if (!replicateToken) {
+      return res.status(500).json({ error: 'Server configuration error - API key not set' });
     }
 
     const response = await fetch('https://api.replicate.com/v1/predictions', {
